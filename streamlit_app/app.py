@@ -31,17 +31,18 @@ LINE = '#30302D'
 ACCENT = '#D4F04D'
 RED = '#EF4444'
 
-ROOT_DIR = Path(__file__).resolve().parent.parent
-BASE_DIR = str(ROOT_DIR)
-if BASE_DIR not in sys.path:
-    sys.path.insert(0, BASE_DIR)
+def resolve_file(filename):
+    for base in [Path(__file__).resolve().parent.parent, Path(__file__).resolve().parent, Path.cwd()]:
+        p = os.path.join(str(base), filename)
+        if os.path.exists(p):
+            return p
+    return None
 
-MODELS_DIR = os.path.join(BASE_DIR, "models")
-MASTER_CSV = os.path.join(BASE_DIR, "all_datasets_features_12_master.csv")
-BENCHMARK_JSON = os.path.join(BASE_DIR, "master_benchmark_results.json")
-LATENCY_CSV = os.path.join(BASE_DIR, "realtime_latency_benchmark.csv")
-ABLATION_CSV = os.path.join(BASE_DIR, "research_ablation_results.csv")
-ABLATION_JSON = os.path.join(BASE_DIR, "research_ablation_results.json")
+MASTER_CSV = resolve_file("all_datasets_features_12_master.csv")
+BENCHMARK_JSON = resolve_file("master_benchmark_results.json")
+LATENCY_CSV = resolve_file("realtime_latency_benchmark.csv")
+ABLATION_CSV = resolve_file("research_ablation_results.csv")
+ABLATION_JSON = resolve_file("research_ablation_results.json")
 
 # ----------------- CSS STYLING -----------------
 st.markdown(f'''<style>
@@ -285,7 +286,13 @@ st.markdown('''<div class="section-head"><div class="section-number">03</div><di
 
 st.markdown('''<div class="stat-grid"><div class="stat-cell"><div class="stat-number">9,160</div><div class="stat-caption">CUTS IN MASTER BENCHMARK</div></div><div class="stat-cell"><div class="stat-number">42</div><div class="stat-caption">DYNAMIC CONFIGURATIONS</div></div><div class="stat-cell"><div class="stat-number">5-FOLD</div><div class="stat-caption">STANDARD VALIDATION</div></div><div class="stat-cell"><div class="stat-number">GROUP</div><div class="stat-caption">LEAVE-ONE-DATASET-OUT</div></div></div>''', unsafe_allow_html=True)
 
-view = st.radio('Validation view', ['GroupKFold (Cross-Tool / Unseen Configurations)', 'Standard Stratified 5-Fold'], horizontal=True, label_visibility='collapsed')
+view = st.radio(
+    'Validation view',
+    ['GroupKFold (Cross-Tool / Unseen Configurations)', 'Standard Stratified 5-Fold'],
+    horizontal=True,
+    label_visibility='collapsed',
+    key='benchmark_view_selector'
+)
 
 # Build styled HTML table for smooth transition
 if bench_data is not None:
@@ -304,7 +311,10 @@ if bench_data is not None:
         
         rows_html += f'<tr><td style="font-weight:500">{clean_name}</td><td {acc_class}>{acc_str}</td><td>{prec_str}</td><td>{rec_str}</td><td>{f1_str}</td><td>{auc_str}</td></tr>'
 else:
-    rows_html = '<tr><td>LightGBM (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.68% ± 3.02%</td><td>91.24%</td><td>89.13%</td><td>0.8913</td><td>0.9659</td></tr><tr><td>XGBoost (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.53% ± 3.12%</td><td>91.10%</td><td>89.00%</td><td>0.8900</td><td>0.9669</td></tr><tr><td>Random Forest (12-Feat)</td><td>90.41% ± 3.11%</td><td>91.85%</td><td>88.58%</td><td>0.8858</td><td>0.9635</td></tr><tr><td>PINN / Neural Net</td><td>85.84% ± 3.53%</td><td>86.42%</td><td>84.22%</td><td>0.8422</td><td>0.9254</td></tr>'
+    if "Group" in view:
+        rows_html = '<tr><td style="font-weight:500">LightGBM (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.68% ± 3.02%</td><td>91.24%</td><td>89.13%</td><td>0.8913</td><td>0.9659</td></tr><tr><td style="font-weight:500">XGBoost (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.53% ± 3.12%</td><td>91.10%</td><td>89.00%</td><td>0.8900</td><td>0.9669</td></tr><tr><td style="font-weight:500">Random Forest (12-Feat)</td><td>90.41% ± 3.11%</td><td>91.85%</td><td>88.58%</td><td>0.8858</td><td>0.9635</td></tr><tr><td style="font-weight:500">PINN / Neural Net</td><td>85.84% ± 3.53%</td><td>86.42%</td><td>84.22%</td><td>0.8422</td><td>0.9254</td></tr>'
+    else:
+        rows_html = '<tr><td style="font-weight:500">LightGBM (12-Feat)</td><td style="color:var(--accent);font-weight:600">92.85% ± 0.62%</td><td>93.23%</td><td>91.58%</td><td>0.9239</td><td>0.9856</td></tr><tr><td style="font-weight:500">XGBoost (12-Feat)</td><td style="color:var(--accent);font-weight:600">92.84% ± 0.49%</td><td>93.29%</td><td>91.49%</td><td>0.9237</td><td>0.9853</td></tr><tr><td style="font-weight:500">Random Forest (12-Feat)</td><td>92.48% ± 0.68%</td><td>93.67%</td><td>90.24%</td><td>0.9191</td><td>0.9822</td></tr><tr><td style="font-weight:500">PINN / Neural Net</td><td>89.98% ± 1.37%</td><td>89.87%</td><td>88.35%</td><td>0.8909</td><td>0.9645</td></tr>'
 
 table_html = f'''<div style="overflow-x:auto;border:1px solid var(--line);background:var(--surface);margin-top:18px"><table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;text-align:left"><thead style="border-bottom:1px solid var(--line);background:#1A1A18"><tr style="color:var(--muted);font-size:11px;letter-spacing:0.08em"><th style="padding:14px 18px">MODEL ARCHITECTURE</th><th style="padding:14px 18px">ACCURACY</th><th style="padding:14px 18px">PRECISION</th><th style="padding:14px 18px">RECALL</th><th style="padding:14px 18px">F1-SCORE</th><th style="padding:14px 18px">ROC-AUC</th></tr></thead><tbody style="font-size:13px;color:var(--text)">{rows_html}</tbody></table></div>'''
 st.markdown(table_html, unsafe_allow_html=True)
