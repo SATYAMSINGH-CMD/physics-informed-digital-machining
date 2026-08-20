@@ -1,0 +1,77 @@
+================================================================================
+              FEATURE CORRELATION & REDUNDANCY ANALYSIS REPORT
+                             Tony Dataset 1
+================================================================================
+
+1. MATRIX & METHODOLOGY SUMMARY
+--------------------------------------------------------------------------------
+- Number of Experiments            : 102
+- Candidate Features Evaluated     : 49
+- Correlation Metric               : Pearson Correlation Coefficient (r)
+- Output Correlation Matrix        : D:\tony dataset\data\correlation_matrix.csv
+- Output Heatmap PNG               : D:\tony dataset\data\correlation_heatmap.png
+
+2. HIGH CORRELATION PAIRS THRESHOLDS
+--------------------------------------------------------------------------------
+- Pairs with |r| >= 0.80            : 96
+- Pairs with |r| >= 0.85            : 61
+
+Top 10 Strongest Correlated Pairs (|r| descending):
+   1. zero_crossing_rate               <--> mean_crossing_rate               | r = +1.0000 (|r| = 1.0000)
+   2. margin_factor                    <--> impulse_factor                   | r = +0.9868 (|r| = 0.9868)
+   3. crest_factor                     <--> impulse_factor                   | r = +0.9867 (|r| = 0.9867)
+   4. d1_energy                        <--> d2_energy                        | r = +0.9816 (|r| = 0.9816)
+   5. ar_coeff_2                       <--> ar_coeff_3                       | r = -0.9735 (|r| = 0.9735)
+   6. d1_energy                        <--> ar_residual_variance             | r = +0.9734 (|r| = 0.9734)
+   7. kurtosis                         <--> skewness                         | r = +0.9728 (|r| = 0.9728)
+   8. spectral_skewness                <--> spectral_kurtosis                | r = +0.9702 (|r| = 0.9702)
+   9. margin_factor                    <--> shape_factor                     | r = +0.9682 (|r| = 0.9682)
+  10. crest_factor                     <--> spectral_entropy                 | r = +0.9675 (|r| = 0.9675)
+
+3. REDUNDANT FEATURE GROUPS (|r| >= 0.85)
+--------------------------------------------------------------------------------
+Total Strongly Correlated Clusters: 6
+  Cluster 1: kurtosis, higuchi_fractal_dimension, d2_energy, impulse_factor, margin_factor, skewness, d3_energy, crest_factor, d3_wavelet_std, spectral_entropy, shape_factor, spectral_flatness, d1_energy, ar_residual_variance, katz_fractal_dimension
+  Cluster 2: zero_crossing_rate, mean_crossing_rate
+  Cluster 3: off_harmonic_energy_ratio, multi_axis_energy_asymmetry
+  Cluster 4: spectral_centroid, wavelet_energy_entropy, spectral_rolloff_85, spectral_spread, cross_spectral_centroid, spectral_skewness, spectral_kurtosis
+  Cluster 5: phase_space_area, acceleration_jerk_rms
+  Cluster 6: ar_coeff_1, ar_coeff_2, ar_coeff_3
+
+4. CORRELATION WITH PROCESS PARAMETERS (RPM & AXIAL DEPTH)
+--------------------------------------------------------------------------------
+Top Features Correlated with Spindle Speed (RPM):
+  - cross_spectral_centroid          | r(RPM) = +0.9116
+  - autocorr_first_zero_lag          | r(RPM) = -0.7885
+  - wavelet_energy_entropy           | r(RPM) = +0.6927
+  - d1_relative_energy               | r(RPM) = +0.6768
+  - spectral_rolloff_85              | r(RPM) = +0.6684
+
+Top Features Correlated with Axial Depth of Cut:
+  - a4_energy                        | r(Depth) = +0.9025
+  - coherence_at_tpf                 | r(Depth) = -0.7565
+  - harmonic_peak_ratio              | r(Depth) = -0.7127
+  - dominant_peak_tpf_ratio          | r(Depth) = -0.7040
+  - off_harmonic_energy_ratio        | r(Depth) = +0.6733
+
+5. PRELIMINARY RETENTION / PRUNING RECOMMENDATIONS (PRELIMINARY)
+--------------------------------------------------------------------------------
+NOTE: High correlation indicates potential redundancy, NOT lack of value.
+No features are deleted in this step. Retained candidates will be finalized after SHAP & ML.
+
+Preliminary Candidates for Pruning (due to direct redundancy):
+  1. 'mean_crossing_rate': Identical to 'zero_crossing_rate' due to mean-centering (r = +1.000).
+  2. Sub-band Wavelet Energies: High inter-subband collinearity (e.g., d4_energy vs a4_energy r = +0.970);
+     relative ratios ('d1_relative_energy', 'wavelet_energy_entropy') carry cleaner scale information.
+  3. AR Coefficients: phi_1 and phi_2 exhibit strong linear coupling (r = -0.991); 'ar_residual_variance'
+     or single primary AR coefficient can be retained.
+
+Preliminary Candidates for Retention:
+  - 'kurtosis' / 'crest_factor' (Time-domain transient impact)
+  - 'spectral_centroid' / 'off_harmonic_energy_ratio' (Frequency-domain chatter energy shift)
+  - 'coherence_at_tpf' / 'cross_correlation_coeff' (Cross-channel dynamic coupling)
+  - 'wavelet_energy_entropy' (Multi-scale energy distribution disorder)
+  - 'permutation_entropy' / 'katz_fractal_dimension' (Nonlinear dynamics complexity)
+  - 'acceleration_jerk_rms' / 'harmonic_peak_ratio' (Physics-informed chatter indicators)
+
+================================================================================

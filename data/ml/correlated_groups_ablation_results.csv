@@ -1,0 +1,15 @@
+group_family,sub_config,num_features,f1_mean,f1_std,roc_auc_mean,roc_auc_std,features_used
+1. AR Coefficients,All AR Features,4,0.951140350877193,0.04669732537291282,0.9782407407407409,0.027373602776100896,"ar_coeff_1, ar_coeff_2, ar_coeff_3, ar_residual_variance"
+1. AR Coefficients,Remove ar_coeff_3,3,0.917483660130719,0.07080651918763259,0.9782407407407406,0.025425055958788884,"ar_coeff_1, ar_coeff_2, ar_residual_variance"
+1. AR Coefficients,Only ar_coeff_1 & variance,2,0.917483660130719,0.07080651918763259,0.9807870370370371,0.02146171664166526,"ar_coeff_1, ar_residual_variance"
+1. AR Coefficients,Only ar_coeff_1,1,0.6702240896358543,0.1287525987193444,0.7567129629629629,0.08851677512617596,ar_coeff_1
+2. Impulsiveness / Shape Features,All Impulsiveness,6,0.8780849181777974,0.08600311961973102,0.9680555555555556,0.03704137706053145,"kurtosis, skewness, crest_factor, margin_factor, shape_factor, impulse_factor"
+2. Impulsiveness / Shape Features,Remove margin_factor,5,0.8743697478991596,0.08785833844919913,0.9712962962962962,0.041450054232591474,"kurtosis, skewness, crest_factor, shape_factor, impulse_factor"
+2. Impulsiveness / Shape Features,Only kurtosis & crest_factor,2,0.8694677871148461,0.07494682626458488,0.9747685185185185,0.02695939511396422,"kurtosis, crest_factor"
+2. Impulsiveness / Shape Features,Only kurtosis,1,0.8339122315592904,0.03455423754531021,0.9505787037037037,0.034597770797698726,kurtosis
+3. Wavelet Sub-band Energy,All Wavelet Energies,7,0.8698039215686274,0.12105902043341012,0.9814814814814815,0.023424278964210236,"d1_energy, d2_energy, d3_energy, d4_energy, a4_energy, d1_relative_energy, d3_d4_subband_energy_ratio"
+3. Wavelet Sub-band Energy,Remove d2_energy,6,0.8682352941176472,0.12017160611949683,0.9719907407407407,0.030291366301769637,"d1_energy, d3_energy, d4_energy, a4_energy, d1_relative_energy, d3_d4_subband_energy_ratio"
+3. Wavelet Sub-band Energy,Only d1_relative_energy & ratio,2,0.7362573099415204,0.03726894666181139,0.8482638888888889,0.039000336339163846,"d1_relative_energy, d3_d4_subband_energy_ratio"
+4. Spectral Geometry,All Spectral Geometry,7,0.9314285714285713,0.08590455073355947,0.9476851851851851,0.09455784767499366,"spectral_centroid, spectral_entropy, spectral_flatness, spectral_rolloff_85, spectral_spread, spectral_skewness, spectral_kurtosis"
+4. Spectral Geometry,Remove spectral_skewness/kurtivity,5,0.9314285714285713,0.08590455073355947,0.9409722222222221,0.10314311943324071,"spectral_centroid, spectral_entropy, spectral_flatness, spectral_rolloff_85, spectral_spread"
+4. Spectral Geometry,Only spectral_centroid & entropy,2,0.936140350877193,0.07324514129482908,0.93125,0.09762812094883318,"spectral_centroid, spectral_entropy"

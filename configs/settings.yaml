@@ -1,0 +1,45 @@
+# Tony Dataset: Physics-Informed Machining AI Configuration
+
+app:
+  name: "Tony Dataset Machining AI"
+  version: "0.1.0"
+  environment: "development"
+
+paths:
+  raw_data_dir: "data/raw"
+  processed_data_dir: "data/processed"
+  features_dir: "data/features"
+  models_dir: "models"
+  docs_dir: "docs"
+
+loader:
+  time_series_file_pattern: "time*.h5"
+  stability_file_pattern: "stability_boundary*.h5"
+  default_sampling_rate_hz: 10000.0
+
+feature_engineering:
+  time_domain:
+    metrics:
+      - "mean"
+      - "std"
+      - "peak"
+      - "rms"
+      - "kurtosis"
+      - "skewness"
+      - "crest_factor"
+  frequency_domain:
+    fft_nperseg: 2048
+    noverlap: 1024
+    window: "hann"
+
+ml_models:
+  chatter_classification:
+    threshold_ratio: 1.5
+    model_type: "random_forest"
+    random_state: 42
+
+ui:
+  theme: "dark"
+  page_title: "Tony Dataset: Physics-Informed Machining AI"
+  page_icon: "⚙️"
+  layout: "wide"

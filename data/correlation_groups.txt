@@ -1,0 +1,58 @@
+================================================================================
+ REDUNDANT FEATURE CLUSTER GROUPS (|r| >= 0.85 Threshold)
+================================================================================
+Total Cluster Groups Identified: 6
+
+GROUP 1: (15 features)
+  - kurtosis
+  - higuchi_fractal_dimension
+  - d2_energy
+  - impulse_factor
+  - margin_factor
+  - skewness
+  - d3_energy
+  - crest_factor
+  - d3_wavelet_std
+  - spectral_entropy
+  - shape_factor
+  - spectral_flatness
+  - d1_energy
+  - ar_residual_variance
+  - katz_fractal_dimension
+  Likely Cause & Relationship:
+    - Wavelet Energy Coupling: Multi-resolution sub-band energies scale together with overall vibration power increases across frequency bands during heavy cutting.
+    - Impulsiveness Spikes: Time-domain shape factors (Kurtosis, Crest Factor, Margin Factor) all react sharply to isolated impact pulses in cutting force.
+
+GROUP 2: (2 features)
+  - zero_crossing_rate
+  - mean_crossing_rate
+  Likely Cause & Relationship:
+    - Implementation Redundancy: Both zero_crossing_rate and mean_crossing_rate mean-center the acceleration signal prior to zero-crossing evaluation, making them mathematically identical.
+
+GROUP 3: (2 features)
+  - off_harmonic_energy_ratio
+  - multi_axis_energy_asymmetry
+  Likely Cause & Relationship:
+
+GROUP 4: (7 features)
+  - spectral_centroid
+  - wavelet_energy_entropy
+  - spectral_rolloff_85
+  - spectral_spread
+  - cross_spectral_centroid
+  - spectral_skewness
+  - spectral_kurtosis
+  Likely Cause & Relationship:
+    - Impulsiveness Spikes: Time-domain shape factors (Kurtosis, Crest Factor, Margin Factor) all react sharply to isolated impact pulses in cutting force.
+
+GROUP 5: (2 features)
+  - phase_space_area
+  - acceleration_jerk_rms
+  Likely Cause & Relationship:
+
+GROUP 6: (3 features)
+  - ar_coeff_1
+  - ar_coeff_2
+  - ar_coeff_3
+  Likely Cause & Relationship:
+    - Autoregressive Model Coefficients: AR(3) coefficients phi_1, phi_2, phi_3 constrain the time-series pole positions jointly.

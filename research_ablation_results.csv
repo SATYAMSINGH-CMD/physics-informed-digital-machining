@@ -1,0 +1,6 @@
+Training_Data_Pct,GroupKFold_Pure_NN,GroupKFold_PINN,GroupKFold_PINN_Advantage,GroupKFold_XGBoost,RandomCV_PINN
+10%,83.29%,83.11%,+-0.19%,86.96%,86.10%
+25%,83.15%,85.38%,+2.23%,88.42%,87.30%
+50%,85.06%,85.62%,+0.55%,89.06%,85.82%
+75%,84.60%,83.50%,+-1.09%,89.53%,85.23%
+100%,83.43%,83.77%,+0.34%,89.79%,86.86%

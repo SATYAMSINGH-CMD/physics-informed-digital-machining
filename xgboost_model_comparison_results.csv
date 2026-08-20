@@ -1,0 +1,13 @@
+Metric,XGBoost-12,XGBoost-7
+Train Accuracy,1.0000,0.9877
+Train F1-Score,1.0000,0.9846
+Train ROC-AUC,1.0000,0.9994
+CV Accuracy (5-Fold Mean±Std),0.9382 ± 0.0396,0.9375 ± 0.0559
+CV F1-Score (5-Fold Mean±Std),0.9197 ± 0.0460,0.9227 ± 0.0696
+CV ROC-AUC (5-Fold Mean±Std),0.9902 ± 0.0080,0.9935 ± 0.0080
+Test Accuracy,0.9524,0.9524
+Test Precision,1.0000,1.0000
+Test Recall,0.8889,0.8889
+Test F1-Score,0.9412,0.9412
+Test ROC-AUC,0.9630,0.9907
+"Test Confusion Matrix [TN,FP/FN,TP]","[[12, 0],[1, 8]]","[[12, 0],[1, 8]]"

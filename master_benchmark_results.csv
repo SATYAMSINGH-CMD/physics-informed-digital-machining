@@ -1,0 +1,6 @@
+Model,Stratified_CV_Accuracy,Stratified_CV_F1,Stratified_CV_ROC_AUC,GroupKFold_Accuracy,GroupKFold_F1,GroupKFold_ROC_AUC
+XGBoost-12,92.84% ± 0.49%,0.9237,0.9853,90.53% ± 3.12%,0.8900,0.9669
+XGBoost-7,91.35% ± 1.07%,0.9072,0.9758,87.95% ± 4.13%,0.8593,0.9446
+LightGBM-12,92.85% ± 0.62%,0.9239,0.9856,90.68% ± 3.02%,0.8913,0.9659
+RandomForest-12,92.48% ± 0.68%,0.9191,0.9822,90.41% ± 3.11%,0.8858,0.9635
+MLP_NeuralNet-12,89.98% ± 1.37%,0.8909,0.9645,85.84% ± 3.53%,0.8422,0.9254

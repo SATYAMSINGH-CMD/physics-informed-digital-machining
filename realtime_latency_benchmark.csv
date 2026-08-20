@@ -1,0 +1,7 @@
+Stage / Model,Mean (ms),p50 Median (ms),p95 (ms),p99 (ms),Max (ms),Real-Time Viable (<50ms)
+Feature_Extraction,6.831 ms,6.651 ms,8.353 ms,10.739 ms,81.955 ms,YES (Hard Real-Time)
+XGBoost_Inference,1.656 ms,1.097 ms,3.905 ms,13.902 ms,76.650 ms,YES (Hard Real-Time)
+LightGBM_Inference,2.072 ms,1.752 ms,3.135 ms,7.935 ms,106.882 ms,YES (Hard Real-Time)
+MLP_Inference,0.665 ms,0.641 ms,0.840 ms,1.224 ms,11.030 ms,YES (Hard Real-Time)
+Total_RoundTrip_XGBoost,8.487 ms,7.819 ms,12.354 ms,21.845 ms,100.007 ms,YES (Hard Real-Time)
+PINN_ONNX_Inference,0.175 ms,0.169 ms,0.211 ms,0.288 ms,1.823 ms,YES (Hard Real-Time)

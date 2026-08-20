@@ -1,0 +1,23 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.env/
+env/
+
+# Raw Large Simulation Files (Keep processed CSVs and Models)
+raw_data/
+*.mat
+Dataset_*_extracted_raw/
+*.wav
+*.zip
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

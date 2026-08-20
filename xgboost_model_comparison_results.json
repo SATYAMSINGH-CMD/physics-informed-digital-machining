@@ -1,0 +1,174 @@
+{
+    "dataset_info": {
+        "total_samples": 102,
+        "train_samples": 81,
+        "test_samples": 21,
+        "train_class_counts": {
+            "stable_0": 48,
+            "chatter_1": 33
+        },
+        "test_class_counts": {
+            "stable_0": 12,
+            "chatter_1": 9
+        },
+        "random_state": 42,
+        "test_size": 0.2
+    },
+    "xgboost_baseline_parameters": {
+        "n_estimators": 60,
+        "max_depth": 3,
+        "learning_rate": 0.05,
+        "subsample": 0.85,
+        "colsample_bytree": 0.85,
+        "reg_alpha": 0.1,
+        "reg_lambda": 1.0,
+        "eval_metric": "logloss",
+        "random_state": 42,
+        "use_label_encoder": false
+    },
+    "xgboost_12": {
+        "features": [
+            "kurtosis_1st_derivative",
+            "ar_coeff_2",
+            "d2_energy",
+            "skewness_1st_derivative",
+            "multi_axis_energy_asymmetry",
+            "d3_d4_subband_energy_ratio",
+            "coherence_at_dominant_resonant",
+            "impulse_factor",
+            "cross_axis_peak_delay",
+            "cross_spectral_centroid",
+            "phase_space_ellipsicity",
+            "bivariate_orbit_radius_ratio"
+        ],
+        "train_metrics": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "roc_auc": 1.0
+        },
+        "cv_metrics": {
+            "accuracy_mean": 0.9382352941176471,
+            "accuracy_std": 0.03955581663621401,
+            "f1_mean": 0.9196803196803197,
+            "f1_std": 0.046039099502870905,
+            "roc_auc_mean": 0.9901587301587302,
+            "roc_auc_std": 0.008040587391691362
+        },
+        "test_metrics": {
+            "accuracy": 0.9523809523809523,
+            "precision": 1.0,
+            "recall": 0.8888888888888888,
+            "f1": 0.9411764705882353,
+            "roc_auc": 0.9629629629629629,
+            "confusion_matrix": [
+                [
+                    12,
+                    0
+                ],
+                [
+                    1,
+                    8
+                ]
+            ]
+        },
+        "feature_importance_top5": [
+            {
+                "feature": "d2_energy",
+                "importance_gain": 13.117998123168945,
+                "importance_weight": 17.0
+            },
+            {
+                "feature": "ar_coeff_2",
+                "importance_gain": 11.971295356750488,
+                "importance_weight": 35.0
+            },
+            {
+                "feature": "impulse_factor",
+                "importance_gain": 7.1364617347717285,
+                "importance_weight": 24.0
+            },
+            {
+                "feature": "skewness_1st_derivative",
+                "importance_gain": 1.4905271530151367,
+                "importance_weight": 4.0
+            },
+            {
+                "feature": "phase_space_ellipsicity",
+                "importance_gain": 1.3310068845748901,
+                "importance_weight": 9.0
+            }
+        ]
+    },
+    "xgboost_7": {
+        "features": [
+            "kurtosis_1st_derivative",
+            "ar_coeff_2",
+            "d2_energy",
+            "skewness_1st_derivative",
+            "multi_axis_energy_asymmetry",
+            "d3_d4_subband_energy_ratio",
+            "coherence_at_dominant_resonant"
+        ],
+        "train_metrics": {
+            "accuracy": 0.9876543209876543,
+            "precision": 1.0,
+            "recall": 0.9696969696969697,
+            "f1": 0.9846153846153847,
+            "roc_auc": 0.999368686868687
+        },
+        "cv_metrics": {
+            "accuracy_mean": 0.9375,
+            "accuracy_std": 0.05590169943749474,
+            "f1_mean": 0.9227106227106228,
+            "f1_std": 0.06962020051321162,
+            "roc_auc_mean": 0.9934920634920635,
+            "roc_auc_std": 0.007974512182273312
+        },
+        "test_metrics": {
+            "accuracy": 0.9523809523809523,
+            "precision": 1.0,
+            "recall": 0.8888888888888888,
+            "f1": 0.9411764705882353,
+            "roc_auc": 0.9907407407407407,
+            "confusion_matrix": [
+                [
+                    12,
+                    0
+                ],
+                [
+                    1,
+                    8
+                ]
+            ]
+        },
+        "feature_importance_top5": [
+            {
+                "feature": "ar_coeff_2",
+                "importance_gain": 10.938563346862793,
+                "importance_weight": 36.0
+            },
+            {
+                "feature": "d2_energy",
+                "importance_gain": 9.617911338806152,
+                "importance_weight": 35.0
+            },
+            {
+                "feature": "skewness_1st_derivative",
+                "importance_gain": 3.6310529708862305,
+                "importance_weight": 15.0
+            },
+            {
+                "feature": "multi_axis_energy_asymmetry",
+                "importance_gain": 1.1193537712097168,
+                "importance_weight": 2.0
+            },
+            {
+                "feature": "d3_d4_subband_energy_ratio",
+                "importance_gain": 1.0789554119110107,
+                "importance_weight": 19.0
+            }
+        ]
+    }
+}

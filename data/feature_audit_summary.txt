@@ -1,0 +1,72 @@
+================================================================================
+              FEATURE MATRIX SANITY AUDIT SUMMARY REPORT
+================================================================================
+
+1. MATRIX DIMENSIONS & INTEGRITY
+--------------------------------------------------------------------------------
+- Total Experiments / Rows       : 102
+- Metadata Columns               : 5 (dataset_number, grid_point, file_name, RPM, Axial_Depth)
+- Feature Columns                : 49
+- Total Matrix Columns           : 54
+- Total Matrix Cells             : 5508
+- Total NaNs in Feature Matrix   : 0
+- Total Infs in Feature Matrix   : 0
+- Dimensions Verdict             : PASSED (Exact 102 x 54 shape verified)
+
+2. SAMPLING RATE INVESTIGATION
+--------------------------------------------------------------------------------
+1. Source of sampling_rate_hz   : Dynamically computed in loader.py (_load_time_dataset)
+                                  via 1.0 / np.median(np.diff(Time)).
+2. Vector Calculation           : Yes, derived from the actual raw HDF5 Time column.
+3. Hardcoded in Extraction?     : No. (A default YAML config value 10000.0 Hz exists,
+                                  but extraction uses dynamic fs per experiment).
+4. Fallback Value               : 10000.0 Hz (Never triggered; 100% of files have Time).
+5. Inter-Experiment Variation   : Yes, sampling rates vary between 12,266.67 Hz and
+                                  12,800.00 Hz across the 102 experiments.
+6. Actual Rates Span            : 10 distinct nominal frequencies:
+                                  12266.67 Hz (10 files), 12400.00 Hz (8 files),
+                                  12466.67 Hz (11 files), 12500.00 Hz (21 files),
+                                  12533.33 Hz (7 files),  12566.67 Hz (7 files),
+                                  12600.00 Hz (25 files), 12666.67 Hz (10 files),
+                                  12800.00 Hz (3 files).
+- Sampling Rate Verdict         : PASSED (Scientifically sound & dynamic)
+
+3. METADATA INTEGRITY
+--------------------------------------------------------------------------------
+- RPM Range                      : 2,000.0 to 12,000.0 RPM (21 unique speeds, step 500)
+- Axial Depth Range              : 0.001 m to 0.015 m (1.0 mm to 15.0 mm, 15 unique depths)
+- Filename / Grid Point Order    : time1_1.h5 to time1_102.h5 (grid_point 1..102)
+- Metadata Verdict               : PASSED (Physically realistic & fully consistent)
+
+4. NUMERICAL VARIANCE & DISTRIBUTION
+--------------------------------------------------------------------------------
+- Constant Features (std == 0)   : 0 features
+- Near-Constant Features         : 0 features
+- Suspicious Features            : 1 feature (a4_energy: large un-normalized force energy
+                                   magnitude up to ~2.18e8, physically expected for DC force)
+- Numerical Range Verdict        : PASSED (All 49 features display non-zero variance)
+
+5. FORMULA IMPLEMENTATION FIDELITY
+--------------------------------------------------------------------------------
+- All 49 candidate feature functions in tony_dataset/features.py match their approved
+  mathematical and engineering definitions across Time, Frequency, Cross-Channel,
+  Wavelet (db4 L4), Nonlinear, Autoregressive (AR3), and Physics-Informed domains.
+- Formula Implementation Verdict: PASSED
+
+6. POTENTIAL DATA LEAKAGE
+--------------------------------------------------------------------------------
+- Target Labels / Stability Map  : Zero target leakage. Candidate features use ONLY
+  signals (Force, Accel, Displ, Vel), Time, fs, RPM, Axial Depth, and Nt=4.
+- Data Leakage Verdict           : PASSED
+
+7. ACCIDENTAL DUPLICATE / REDUNDANT PAIRS
+--------------------------------------------------------------------------------
+- Identified Overlap             : (zero_crossing_rate, mean_crossing_rate)
+  Both functions mean-center Tool_X_Acceleration prior to counting zero-crossings.
+  This produces mathematically identical arrays for mean-centered signals.
+  Flagged for correlation & pruning phase.
+- Duplication Verdict            : NOTED (Flagged for correlation phase pruning)
+
+================================================================================
+FINAL VERDICT: READY FOR CORRELATION
+================================================================================
