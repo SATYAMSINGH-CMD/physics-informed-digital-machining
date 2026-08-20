@@ -97,6 +97,7 @@ streamlit run app.py
 
 ---
 
-## 📚 Documentation
+## 📚 Documentation & Research
 * [Research Abstract & Paper Draft](docs/Research_Abstract_Paper.md)
-* [Internship Pitch Guide & Outreach Kit](docs/Internship_Pitch_Guide.md)
+* [Data Scarcity & Physics Ablation Results](research_ablation_results.csv)
+* [Real-Time Latency Benchmark](realtime_latency_benchmark.csv)
