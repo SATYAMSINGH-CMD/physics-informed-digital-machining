@@ -201,10 +201,12 @@ def find_optimal_stable_speed(current_rpm, depth, dataset):
         candidate_margins = y[stable_mask] - depth
         scores = candidate_margins - 0.0003 * np.abs(candidate_rpms - current_rpm)
         best_idx = np.argmax(scores)
-        return int(round(candidate_rpms[best_idx])), float(y[stable_mask][best_idx])
+        return int(round(candidate_rpms[best_idx])), float(depth), "speed_only"
     else:
+        # Depth exceeds all possible stability lobes. Must clamp to peak safe depth
         peak_idx = np.argmax(y)
-        return int(round(x[peak_idx])), float(y[peak_idx])
+        safe_max_depth = float(np.clip(y[peak_idx] - 0.20, 0.2, 7.5))
+        return int(round(x[peak_idx])), safe_max_depth, "speed_and_depth"
 
 # =========================================================================
 # ACT 01 — THE MACHINE
@@ -214,10 +216,12 @@ st.markdown('''<div class="section-head"><div class="section-number">01</div><di
 
 if 'remediated_rpm' not in st.session_state:
     st.session_state['remediated_rpm'] = 18000
+if 'remediated_depth' not in st.session_state:
+    st.session_state['remediated_depth'] = 4.2
 
 c = st.columns([1, 1, 0.8, 1.2])
 rpm = c[0].slider('Spindle speed · RPM', 1000, 25000, int(st.session_state['remediated_rpm']), 100)
-depth = c[1].slider('Axial depth · mm', 0.2, 8.0, 4.2, 0.1)
+depth = c[1].slider('Axial depth · mm', 0.2, 8.0, float(st.session_state['remediated_depth']), 0.1)
 dataset = c[2].number_input('Configuration (Dataset ID)', 1, 42, 1, 1)
 model_name = c[3].selectbox('Decision model', ['XGBoost', 'LightGBM', 'Random Forest', 'PINN / MLP'])
 
@@ -232,10 +236,16 @@ with right:
     margin = lim - depth
     
     if not stable:
-        opt_rpm, opt_lim = find_optimal_stable_speed(rpm, depth, int(dataset))
-        st.markdown(f'<div style="height:14px"></div><div class="data-note" style="border-left-color:{RED};background:#1E1414"><b>CHATTER DETECTED</b><br>Axial depth exceeds boundary by {abs(margin):.2f} mm. Immediate closed-loop speed remediation recommended.</div>', unsafe_allow_html=True)
-        if st.button('⚡ AUTO-REMEDIATE SPINDLE SPEED', use_container_width=True):
+        opt_rpm, opt_depth, rem_mode = find_optimal_stable_speed(rpm, depth, int(dataset))
+        if rem_mode == "speed_only":
+            msg = f"Depth ({depth:.1f} mm) is achievable in a stable sweet spot. Tuning RPM will eliminate chatter without reducing depth."
+        else:
+            msg = f"Depth exceeds the dynamic stability ceiling ({opt_depth+0.2:.1f} mm). Remediation will adjust RPM to {opt_rpm:,} and clamp depth to {opt_depth:.1f} mm."
+        
+        st.markdown(f'<div style="height:14px"></div><div class="data-note" style="border-left-color:{RED};background:#1E1414"><b>CHATTER DETECTED</b><br>{msg}</div>', unsafe_allow_html=True)
+        if st.button('⚡ AUTO-REMEDIATE PARAMETERS', use_container_width=True):
             st.session_state['remediated_rpm'] = opt_rpm
+            st.session_state['remediated_depth'] = opt_depth
             st.rerun()
     else:
         st.markdown(f'<div style="height:18px"></div><div class="data-note"><b>PHYSICS READING</b><br>Current point is {margin:.2f} mm safely inside the analytical stability boundary.</div>', unsafe_allow_html=True)
@@ -277,32 +287,28 @@ st.markdown('''<div class="stat-grid"><div class="stat-cell"><div class="stat-nu
 
 view = st.radio('Validation view', ['GroupKFold (Cross-Tool / Unseen Configurations)', 'Standard Stratified 5-Fold'], horizontal=True, label_visibility='collapsed')
 
-# Load actual benchmark data
+# Build styled HTML table for smooth transition
 if bench_data is not None:
     key = "group_kfold_cv" if "Group" in view else "stratified_cv"
-    table_rows = []
+    rows_html = ""
     for m_name, m_stats in bench_data[key].items():
-        table_rows.append({
-            "Model Architecture": m_name.replace("_NeuralNet-12", " (PINN/NN)").replace("-12", " (12-Feat)").replace("-7", " (7-Feat)"),
-            "Accuracy": f"{m_stats['accuracy']['mean']*100:.2f}% ± {m_stats['accuracy']['std']*100:.2f}%",
-            "Precision": f"{m_stats['precision']['mean']*100:.2f}%",
-            "Recall": f"{m_stats['recall']['mean']*100:.2f}%",
-            "F1-Score": f"{m_stats['f1']['mean']:.4f}",
-            "ROC-AUC": f"{m_stats['roc_auc']['mean']:.4f}",
-        })
-    df_display = pd.DataFrame(table_rows)
+        clean_name = m_name.replace("_NeuralNet-12", " (PINN/NN)").replace("-12", " (12-Feat)").replace("-7", " (7-Feat)")
+        acc_str = f"{m_stats['accuracy']['mean']*100:.2f}% ± {m_stats['accuracy']['std']*100:.2f}%"
+        prec_str = f"{m_stats['precision']['mean']*100:.2f}%"
+        rec_str = f"{m_stats['recall']['mean']*100:.2f}%"
+        f1_str = f"{m_stats['f1']['mean']:.4f}"
+        auc_str = f"{m_stats['roc_auc']['mean']:.4f}"
+        
+        is_top = "XGBoost-12" in m_name or "LightGBM-12" in m_name
+        acc_class = 'style="color:var(--accent);font-weight:600"' if is_top else ''
+        
+        rows_html += f'<tr><td style="font-weight:500">{clean_name}</td><td {acc_class}>{acc_str}</td><td>{prec_str}</td><td>{rec_str}</td><td>{f1_str}</td><td>{auc_str}</td></tr>'
 else:
-    df_display = pd.DataFrame({
-        'Model Architecture': ['LightGBM (12-Feat)', 'XGBoost (12-Feat)', 'Random Forest (12-Feat)', 'PINN / Neural Net'],
-        'Accuracy': ['90.68% ± 3.02%', '90.53% ± 3.12%', '90.41% ± 3.11%', '85.84% ± 3.53%'],
-        'Precision': ['91.24%', '91.10%', '91.85%', '86.42%'],
-        'Recall': ['89.13%', '89.00%', '88.58%', '84.22%'],
-        'F1-Score': ['0.8913', '0.8900', '0.8858', '0.8422'],
-        'ROC-AUC': ['0.9659', '0.9669', '0.9635', '0.9254']
-    })
+    rows_html = '<tr><td>LightGBM (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.68% ± 3.02%</td><td>91.24%</td><td>89.13%</td><td>0.8913</td><td>0.9659</td></tr><tr><td>XGBoost (12-Feat)</td><td style="color:var(--accent);font-weight:600">90.53% ± 3.12%</td><td>91.10%</td><td>89.00%</td><td>0.8900</td><td>0.9669</td></tr><tr><td>Random Forest (12-Feat)</td><td>90.41% ± 3.11%</td><td>91.85%</td><td>88.58%</td><td>0.8858</td><td>0.9635</td></tr><tr><td>PINN / Neural Net</td><td>85.84% ± 3.53%</td><td>86.42%</td><td>84.22%</td><td>0.8422</td><td>0.9254</td></tr>'
 
-st.dataframe(df_display, use_container_width=True, hide_index=True)
-st.caption('Authoritative measured benchmark data across 9,160 experiments.')
+table_html = f'''<div style="overflow-x:auto;border:1px solid var(--line);background:var(--surface);margin-top:18px"><table style="width:100%;border-collapse:collapse;font-family:'DM Mono',monospace;text-align:left"><thead style="border-bottom:1px solid var(--line);background:#1A1A18"><tr style="color:var(--muted);font-size:11px;letter-spacing:0.08em"><th style="padding:14px 18px">MODEL ARCHITECTURE</th><th style="padding:14px 18px">ACCURACY</th><th style="padding:14px 18px">PRECISION</th><th style="padding:14px 18px">RECALL</th><th style="padding:14px 18px">F1-SCORE</th><th style="padding:14px 18px">ROC-AUC</th></tr></thead><tbody style="font-size:13px;color:var(--text)">{rows_html}</tbody></table></div>'''
+st.markdown(table_html, unsafe_allow_html=True)
+st.caption(f'Evaluation Protocol: {"GroupKFold (Leave-One-Dataset-Out cross-tool generalization)" if "Group" in view else "Standard 5-Fold Cross Validation"} across 9,160 cuts.')
 
 # ----------------- DATA SCARCITY & ABLATION STUDY -----------------
 st.markdown('<div style="height:60px"></div><div class="eyebrow">RESEARCH NOVELTY & ABLATION STUDY</div><div class="question" style="margin-top:18px;max-width:920px">Does physics regularization help when training data is scarce?</div>', unsafe_allow_html=True)
